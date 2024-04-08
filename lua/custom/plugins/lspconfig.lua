@@ -136,9 +136,19 @@ return { -- LSP Configuration & Plugins
     --  - settings (table): Override the default settings passed when initializing the server.
     --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
     local servers = {
-      -- clangd = {},
+      clangd = {},
       -- gopls = {},
-      -- pyright = {},
+      pyright = {
+        settings = {
+          python = {
+            analysis = {
+              autoSearchPaths = true,
+              diagnosticMode = 'openFilesOnly',
+              useLibraryCodeForTypes = true,
+            },
+          },
+        },
+      },
       -- rust_analyzer = {},
       -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
       --
@@ -148,6 +158,11 @@ return { -- LSP Configuration & Plugins
       -- But for many setups, the LSP (`tsserver`) will work just fine
       -- tsserver = {},
       --
+      cmake = {
+        init_options = {
+          buildDirectory = 'build/Native/',
+        },
+      },
     }
 
     -- lua ls isn't available on FreeBSD
@@ -179,6 +194,10 @@ return { -- LSP Configuration & Plugins
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'cmakelang', -- cmake formatting
+        'autopep8', -- python formatting
+        'autoflake', -- python formatting
+        'isort', -- python formatting
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
